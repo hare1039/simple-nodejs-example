@@ -1,0 +1,49 @@
+<HTML>
+  <HEAD>
+	<TITLE> hello javascript </TITLE>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<!-- Include the polyfill -->
+	<script src="//cdnjs.cloudflare.com/ajax/libs/web-animations/2.3.1/web-animations.min.js"></script>
+
+	<!-- Include Animatelo -->
+	<script src="//cdnjs.cloudflare.com/ajax/libs/animatelo/1.0.3/animatelo.min.js"></script>
+  </HEAD>
+  <BODY>
+	<h1> SIMPLE KANBAN </h1>
+	<form id="msg" method="POST" action="#">
+	  <label> name </label><input type="text" id="username" name="username" />
+	  <label> message </label><input type="text" id="message" name="message" />
+	</form>
+	<button onClick="SubForm()"> submit </button>
+	<button onClick="update()"> update </button>
+	<div id="hello"> </div>
+	<script>
+	  function SubForm (){
+        $.ajax({
+          url:"http://localhost:3000/message",
+          type:"post",
+          data:$("#msg").serialize(),
+          success:function(){
+            console.log("worked");
+	        update();
+          }
+        });
+	  };
+
+	  function update (){
+        $.get("http://localhost:3000/message", function(data) {
+	      $("#hello").empty();
+	      data = JSON.parse(data);
+	      for(var i in data) {
+	          for(var j in data[i]) {
+	              $("#hello").append("<div>" + i + " says " + data[i][j] + "</div>");	  
+	          }
+	      }
+	      window.animatelo.bounce("#hello");
+	      console.log(data);
+	    });
+      };
+	  
+	</script>
+  </BODY>
+</HTML>
