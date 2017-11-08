@@ -5,6 +5,7 @@
 * build steps
 ** first http server
 *** server.js
+#+BEGIN_SRC javascript
   var vhttp = require("http");
   
   function onRequest(request, response) {
@@ -15,12 +16,14 @@
   }
   vhttp.createServer(onRequest).listed(3000);
   console.log("Server has started on port :3000.");
+#+END_SRC
 *** on browser
 	goto localhost:3000
 	great! we have our page!
 	
 ** first web page
 *** index.html
+#+BEGIN_SRC html
 <HTML>
   <HEAD>
 	<TITLE> hello javascript </TITLE>
@@ -29,8 +32,10 @@
 	<h1> SIMPLE KANBAN </h1>
   </BODY>
 </HTML>
+#+END_SRC
 *** server.js
 **** new
+#+BEGIN_SRC javascript
 // we now need to read index.html and serve it to our client
 var fs = require("fs");
 var page = "";
@@ -40,15 +45,19 @@ fs.readFile( __dirname + "/index.html", function (err, data) {
   }
   page = data.toString();
 });
+#+END_SRC
 **** changes
+#+BEGIN_SRC javascript
   response.writeHead(200, {"Content-Type": "text/html"});
   response.write(page);
+#+END_SRC
 *** on browser
 	Now we have our page!
 	Lets add some route
 ** lets add some route
 *** server.js
 **** new
+#+BEGIN_SRC javascript
 var url = require("url");
 var pathname = url.parse(request.url).pathname;
 console.log("Request for " + pathname + " received.");
@@ -61,9 +70,11 @@ if (pathname == "/") {
   response.write("You are on /message !");
   response.end();
 }
+#+END_SRC
 ** post function
 *** index.html
 **** new
+#+BEGIN_SRC html
 <form id="msg" method="POST" action="#">
   <label> name </label><input type="text" id="username" name="username" />
   <label> message </label><input type="text" id="message" name="message" />
@@ -74,7 +85,9 @@ if (pathname == "/") {
     alert(" you called me~~");
   }
 </script>
+#+END_SRC
 **** next
+#+BEGIN_SRC html
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script>
   function SubForm (){
@@ -88,8 +101,10 @@ if (pathname == "/") {
     });
   };
 </script>
+#+END_SRC
 *** server.js
 **** new
+#+BEGIN_SRC javascript
 var qs = require("querystring");
 if (request.method == "GET") {
   response.writeHead(200, {"Content-Type": "text/plain"});
@@ -110,9 +125,11 @@ if (request.method == "GET") {
     response.end();
   });
 }
+#+END_SRC
 ** communication part
 *** index.html
 **** new
+#+BEGIN_SRC html
 <button onClick="update()"> update </button>
 <div id="hello"> </div>
 
@@ -128,8 +145,10 @@ function update (){
     console.log(data);
   });
 };
+#+END_SRC
 *** server.js
 **** new
+#+BEGIN_SRC javascript
 var messages = {};
 
 if (messages[post["username"]] == undefined) {
@@ -138,6 +157,7 @@ if (messages[post["username"]] == undefined) {
 } else {
   messages[post["username"]].push(post["message"]);			
 }
+#+END_SRC
 **** change
 // on GET message
 response.write(JSON.stringify(messages));
@@ -145,12 +165,16 @@ response.write(JSON.stringify(messages));
 ** final add some animation!
 *** index.html
 **** new 
+#+BEGIN_SRC html
 <!-- Include the polyfill -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/web-animations/2.3.1/web-animations.min.js"></script>
 
 <!-- Include Animatelo -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/animatelo/1.0.3/animatelo.min.js"></script>
+#+END_SRC
 **** change 
+#+BEGIN_SRC javascript
 // in update
 window.animatelo.bounce("#hello");
+#+END_SRC
 * Enjoy
