@@ -1,0 +1,156 @@
+* Intro
+  A simple nodejs tutorial.
+  Lets start from implement the server.js
+
+* build steps
+** first http server
+*** server.js
+  var vhttp = require("http");
+  
+  function onRequest(request, response) {
+    console.log("Request received.");
+    response.writeHead(200, {"Content-Type": "text/plain"});
+    response.write("hello world!");
+    response.end();
+  }
+  vhttp.createServer(onRequest).listed(3000);
+  console.log("Server has started on port :3000.");
+*** on browser
+	goto localhost:3000
+	great! we have our page!
+	
+** first web page
+*** index.html
+<HTML>
+  <HEAD>
+	<TITLE> hello javascript </TITLE>
+  </HEAD>
+  <BODY>
+	<h1> SIMPLE KANBAN </h1>
+  </BODY>
+</HTML>
+*** server.js
+**** new
+// we now need to read index.html and serve it to our client
+var fs = require("fs");
+var page = "";
+fs.readFile( __dirname + "/index.html", function (err, data) {
+  if (err) {
+  	throw err; 
+  }
+  page = data.toString();
+});
+**** changes
+  response.writeHead(200, {"Content-Type": "text/html"});
+  response.write(page);
+*** on browser
+	Now we have our page!
+	Lets add some route
+** lets add some route
+*** server.js
+**** new
+var url = require("url");
+var pathname = url.parse(request.url).pathname;
+console.log("Request for " + pathname + " received.");
+if (pathname == "/") {
+  response.writeHead(200, {"Content-Type": "text/html"});
+  response.write(page);
+  response.end();
+} else if (pathname == "/message") {
+  response.writeHead(200, {"Content-Type": "text/plain"});
+  response.write("You are on /message !");
+  response.end();
+}
+** post function
+*** index.html
+**** new
+<form id="msg" method="POST" action="#">
+  <label> name </label><input type="text" id="username" name="username" />
+  <label> message </label><input type="text" id="message" name="message" />
+</form>
+<button onClick="SubForm()"> call </button>
+<script>
+  function SubForm (){
+    alert(" you called me~~");
+  }
+</script>
+**** next
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+  function SubForm (){
+    $.ajax({
+      url: "http://hare1039.nctu.me:5900/message",
+      type: "post",
+      data: $("#msg").serialize(),
+      success: function(){
+        console.log("worked");
+      }
+    });
+  };
+</script>
+*** server.js
+**** new
+var qs = require("querystring");
+if (request.method == "GET") {
+  response.writeHead(200, {"Content-Type": "text/plain"});
+  response.write("You are on /message !");
+  response.end();
+  return;
+} else if (request.method == "POST") {
+  var body = "";
+  request.on("data", function (data) {
+    body += data;
+  });
+  request.on("end", function () {
+    var post = qs.parse(body);
+    console.log(post["username"]);
+    console.log(post["message"]);
+    response.writeHead(200, {"Content-Type": "text/plain"});
+    response.write("done");
+    response.end();
+  });
+}
+** communication part
+*** index.html
+**** new
+<button onClick="update()"> update </button>
+<div id="hello"> </div>
+
+function update (){
+  $.get("http://hare1039.nctu.me:5900/message", function(data) {
+    $("#hello").empty();
+    data = JSON.parse(data);
+    for(var i in data) {
+        for(var j in data[i]) {
+            $("#hello").append("<div>" + i + " says " + data[i][j] + "</div>");	  
+        }
+    }
+    console.log(data);
+  });
+};
+*** server.js
+**** new
+var messages = {};
+
+if (messages[post["username"]] == undefined) {
+  messages[post["username"]] = [];
+  messages[post["username"]].push(post["message"]);
+} else {
+  messages[post["username"]].push(post["message"]);			
+}
+**** change
+// on GET message
+response.write(JSON.stringify(messages));
+
+** final add some animation!
+*** index.html
+**** new 
+<!-- Include the polyfill -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/web-animations/2.3.1/web-animations.min.js"></script>
+
+<!-- Include Animatelo -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/animatelo/1.0.3/animatelo.min.js"></script>
+**** change 
+// in update
+window.animatelo.bounce("#hello");
+* Enjoy
