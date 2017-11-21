@@ -220,6 +220,7 @@ Lets add some route
         <button onClick="update()"> update </button>
         <div id="hello"> </div>
         
+        <script>
         function update (){
           $.get("http://hare1039.nctu.me:5900/message", function(data) {
         	$("#hello").empty();
@@ -232,7 +233,7 @@ Lets add some route
         	console.log(data);
           });
         };
-
+        </script>
 
 <a id="org3ddc78a"></a>
 
