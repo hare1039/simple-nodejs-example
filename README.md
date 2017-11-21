@@ -53,7 +53,7 @@ Lets start from implement the server.js
       response.write("hello world!");
       response.end();
     }
-    vhttp.createServer(onRequest).listed(3000);
+    vhttp.createServer(onRequest).listen(3000);
     console.log("Server has started on port :3000.");
 
 
