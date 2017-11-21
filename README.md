@@ -91,20 +91,21 @@ great! we have our page!
 1.  new
 
         // we now need to read index.html and serve it to our client
-        var fs = require("fs");
+        var fs = require("fs");        
         var page = "";
+        
         fs.readFile( __dirname + "/index.html", function (err, data) {
           if (err) {
         	throw err; 
           }
           page = data.toString();
         });
-
+        // ------ add these line at the front of 
 2.  changes
-
+        
         response.writeHead(200, {"Content-Type": "text/html"});
         response.write(page);
-
+        // ------ add these line in onRequest function
 
 <a id="org34d76a3"></a>
 
@@ -126,6 +127,8 @@ Lets add some route
 1.  new
 
         var url = require("url");
+        // ------ add this line at the beginning
+        
         var pathname = url.parse(request.url).pathname;
         console.log("Request for " + pathname + " received.");
         if (pathname == "/") {
@@ -137,6 +140,7 @@ Lets add some route
           response.write("You are on /message !");
           response.end();
         }
+        // ------ add these line in onRequest function
 
 
 <a id="orgb238a29"></a>
@@ -149,7 +153,7 @@ Lets add some route
 ### change -> index.html
 
 1.  new
-
+        
         <form id="msg" method="POST" action="#">
           <label> name </label><input type="text" id="username" name="username" />
           <label> message </label><input type="text" id="message" name="message" />
@@ -160,6 +164,7 @@ Lets add some route
         	alert(" you called me~~");
           }
         </script>
+        // ------ add these line in index.html, after <h1> SIMPLE KANBAN </h1>
 
 2.  next
 
@@ -167,7 +172,7 @@ Lets add some route
         <script>
           function SubForm (){
         	$.ajax({
-        	  url: "http://hare1039.nctu.me:5900/message",
+        	  url: "/message",
         	  type: "post",
         	  data: $("#msg").serialize(),
         	  success: function(){
@@ -176,7 +181,7 @@ Lets add some route
         	});
           };
         </script>
-
+        // ------ change the content of SubForm()
 
 <a id="org559ec38"></a>
 
@@ -185,6 +190,9 @@ Lets add some route
 1.  new
 
         var qs = require("querystring");
+        // ------ add this line at the beginning
+        
+        
         if (request.method == "GET") {
           response.writeHead(200, {"Content-Type": "text/plain"});
           response.write("You are on /message !");
@@ -204,6 +212,7 @@ Lets add some route
         	response.end();
           });
         }
+        // ------ change the content of onRequest function `else if (pathname == "/message")`
 
 
 <a id="orgb0bf6d3"></a>
@@ -216,13 +225,14 @@ Lets add some route
 ### index.html
 
 1.  new
-
+        
         <button onClick="update()"> update </button>
         <div id="hello"> </div>
-        
+         // ------ add these line below <button onClick="SubForm()"> call </button>
+         
         <script>
         function update (){
-          $.get("http://hare1039.nctu.me:5900/message", function(data) {
+          $.get("/message", function(data) {
         	$("#hello").empty();
         	data = JSON.parse(data);
         	for(var i in data) {
@@ -234,6 +244,7 @@ Lets add some route
           });
         };
         </script>
+        // ------ add these line within <script>
 
 <a id="org3ddc78a"></a>
 
@@ -242,6 +253,7 @@ Lets add some route
 1.  new
 
         var messages = {};
+        // ------ add this line at the beginning
         
         if (messages[post["username"]] == undefined) {
           messages[post["username"]] = [];
@@ -249,11 +261,13 @@ Lets add some route
         } else {
           messages[post["username"]].push(post["message"]);			
         }
-
+        // ------ add these line within
+        
 2.  change
 
-    // on GET message
-    response.write(JSON.stringify(messages));
+        // on GET message
+        response.write(JSON.stringify(messages));
+        
 
 
 <a id="orge149fa0"></a>
@@ -275,7 +289,7 @@ Lets add some route
 
 2.  change
 
-        // in update
+        // in update function
         window.animatelo.bounce("#hello");
 
 
